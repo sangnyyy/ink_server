@@ -18,14 +18,14 @@ console.log("asd");
       if(req.session.user_id){
         callback(null);
       }else{
-        callback("0");
+        callback("0")
         res.status(500).send({
           stat : 0,
           });
       }
     },
     (callback) => {
-			req.session.destroy();
+			req.session.destroy()
 			if(req.session){
 				res.status(500).send({
 				stat : "1"
