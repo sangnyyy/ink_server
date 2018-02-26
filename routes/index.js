@@ -2,8 +2,13 @@ var express = require('express');
 var router = express.Router();
 var login = require('./login/index');
 var board = require('./board/index');
+<<<<<<< HEAD
+var vote = require('./vote/index');
+
+=======
 var ink = require('./ink/index');
 var vote = require('./vote/index');
+>>>>>>> f24bc0749495e0af58e55fe41e4fad1c2213046c
 var schedule = require('node-schedule');
 var bookmark = require('./bookmark/index');
 var follow = require('./follow/index');
