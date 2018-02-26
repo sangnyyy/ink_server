@@ -11,6 +11,7 @@ var bookmark = require('./bookmark/index');
 var follow = require('./follow/index');
 var topic = require('./topic/index');
 var mypage = require('./mypage/index');
+var comment = require('./comment/index');
 const mysql = require('mysql');
 const pool = require('../config/dbpool');
 const async = require('async');
@@ -22,6 +23,7 @@ router.use('/vote', vote);
 router.use('/bookmark', bookmark);
 router.use('/topic', topic);
 router.use('/mypage', mypage);
+router.use('/comment', comment);
 
 
 var conStyle = '00 00 00 * * 0-7';
