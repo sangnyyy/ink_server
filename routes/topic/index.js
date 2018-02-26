@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
-var getTopic = require('./getTopic');
+var showtopic = require('./showtopic');
 
-router.use('/getTopic', getTopic);
+router.use('/showtopic', showtopic);
 
 
 
