@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var login = require('./login/index');
 var board = require('./board/index');
+var ink = require('./board/index');
 var schedule = require('node-schedule');
 const mysql = require('mysql');
 const pool = require('../config/dbpool');
@@ -9,6 +10,7 @@ const async = require('async');
 console.log("여기");
 router.use('/login', login);
 router.use('/board', board);
+router.use('/ink',ink);
 
 
 
