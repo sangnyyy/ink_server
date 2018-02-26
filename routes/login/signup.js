@@ -93,10 +93,8 @@ router.post('/', (req,res) => {
 						res.status(201).send({
 							stat: "success",
 							data: {
-								"user_data":{
-									"email":userData[0].email,
-									"ink":userData[0].ink
-								},
+								"email":userData[0].email,
+								"ink":userData[0].ink		
 							}
 						});
 						req.session.user_id = userData[0].user_id;

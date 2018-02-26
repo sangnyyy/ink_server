@@ -36,19 +36,24 @@ console.log("asd");
   		});
 		},
     (connection, callback) => {
-      let updateink = "select * from bulletin where bulletin_id=?";
-      connection.query(updateink, [req.body.bulletin_id], (err, rows) => {
+      let updateink = "select * from users where user_id=?";
+      connection.query(updateink, [req.session.user_id], (err, rows) => {
         if(err){
           connection.release();
           res.status(501).send({
-            stat: "fail"
+            stat: "101"
           });
-          callback("mysql proc error ", null);
+          callback("101", null);
         }else{
-          res.status(200).send({
-              "stat":"success",
-              "data":rows
-          });
+          if(rows[0].ink-req.body.bulletin_ink<0){
+            res.status(501).send({
+              stat:101
+            });
+            callback("101", null);
+
+          }else{
+            callback(null,connection);
+          }
         }
       });
     },
@@ -58,39 +63,40 @@ console.log("asd");
         if(err){
           connection.release();
           res.status(501).send({
-            stat: "fail"
+            stat: "102"
           });
-          callback("mysql proc error ", null);
+          callback("102", null);
         }else{
+          console.log(rows);
         if(rows.changedRows==1){
           console.log("success");
-
             callback(null, connection);
         }else{
           console.log("fail");
           connection.release();
           res.status(501).send({
-            stat: "fail"
+            stat: "103"
           });
-          callback("mysql proc error ", null);
+          callback("103", null);
         }
         }
       });
     },
     (connection, callback) => {
       let updateink = "update users set ink = ink-? where user_id = ?;";
+      console.log([req.body.bulletin_ink,req.session.user_id]);
       connection.query(updateink, [req.body.bulletin_ink,req.session.user_id], (err, rows) => {
         if(err){
           connection.release();
           res.status(501).send({
-            stat: "fail"
+            stat: "104"
           });
-          callback("mysql proc error ", null);
+          callback("104", null);
         }else{
         if(rows.changedRows==1){
           callback(null, connection);
         }else{
-          callback("fail");
+          callback("105");
         }
         }
       });
@@ -101,9 +107,9 @@ console.log("asd");
         if(err){
           connection.release();
           res.status(501).send({
-            stat: "fail"
+            stat: "106"
           });
-          callback("mysql proc error ", null);
+          callback("106", null);
         }else{
           res.status(200).send({
               "stat":"success",
