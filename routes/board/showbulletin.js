@@ -32,8 +32,8 @@ router.get('/', (req, res) => {
 		},
     (connection, callback) => {
 			var selectQuery = 'SELECT if((SELECT COUNT(*) FROM vote WHERE vote.user_id = ? AND vote.bulletin_id = bulletin.bulletin_id)=1, 1, 0) AS is_liked, ' +
-												'bulletin.bulletin_id, bulletin.bulletin_date, bulletin.bulletin_good_count, bulletin.bulletin_ink, bulletin.bulletin_text, bulletin.topic_text, bulletin.user_id, ' +
-												'users.email FROM bulletin INNER JOIN users ON users.user_id = bulletin.user_id limit 20';
+												'bulletin.bulletin_id, bulletin.bulletin_date, bulletin.bulletin_good_count, bulletin.bulletin_ink, bulletin.bulletin_text, bulletin.topic_text, bulletin.user_id, bulletin.flag, ' +
+												'users.email FROM bulletin INNER JOIN users ON users.user_id = bulletin.user_id ORDER BY bulletin.bulletin_date DESC';
 			connection.query(selectQuery, user_id, (err, rows) => {
 				if(err){
 					res.status(500).send({
