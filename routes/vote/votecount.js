@@ -13,7 +13,7 @@ router.post('/', (req,res) => {
 	let query = {
 		insertQuery: 'INSERT INTO vote (user_id, type, bulletin_id) VALUES (?, 1, ?)',
 		countQuery: 'UPDATE bulletin SET bulletin_good_count = bulletin_good_count+1 WHERE bulletin_id=?',
-    selectQuery: 'SELECT user_id, type, bulletin_id FROM vote WHERE bulletin_id = ?'
+    selectQuery: 'SELECT bulletin_id, bulletin_date, bulletin_good_count, bulletin_ink, bulletin_text, topic_text, user_id FROM bulletin WHERE bulletin_id = ?'
 	};
 	console.log("fjfjfj");
 	let taskArray = [
@@ -44,7 +44,7 @@ router.post('/', (req,res) => {
 		(connection, callback) => {
 			let insertQuery = query.insertQuery;
 			console.log(insertQuery);
-			connection.query(insertQuery, [user_id, bulletin_id], (err, insertData) => {
+			connection.query(insertQuery, [user_id, bulletin_id], (err) => {
 				if(err){
 					console.log(err);
 					res.status(501).send({
@@ -53,11 +53,11 @@ router.post('/', (req,res) => {
 					connection.release();
 					callback("insert error");
 				}else{
-					callback(null, connection, insertData);
+					callback(null, connection);
 				}
 			});
 		},
-		(connection, insertData, callback) => {
+		(connection, callback) => {
 			let countQuery = query.countQuery;
 			console.log(countQuery);
 			connection.query(countQuery, bulletin_id, (err) => {
@@ -69,34 +69,33 @@ router.post('/', (req,res) => {
 					connection.release();
 					callback("vote error", null);
 				}else{
-          connection.release();
-    			res.status(501).send({
-    				stat: "vote update fail"
-    			});
-					callback(null, connection, insertData);
+					callback(null, connection);
 				}
 			});
 	},
-	(connection, insertData, callback) => {
+	(connection, callback) => {
 		console.log('asdadasdsagsdgdgdgdg');
 		var selectQuery = query.selectQuery;
 		connection.query(selectQuery, bulletin_id, (err, rows) => {
 			if(err){
+				console.log(err);
 				res.status(500).send({
 					stat : "fail"
 				});
 				connection.release();
 				callback("fail");
 			} else{
-        console.log(insertData);
         res.status(201).send({
           stat : "success",
           data : {
-            "user_id" : insertData.user_id,
-            "type" : insertData.type,
-            "bulletin_id" : insertData.bulletin_id
-          },
-          list : rows
+						"bulletin_id" : rows[0].bulletin_id,
+						"bulletin_date" : rows[0].bulletin_date,
+						"bulletin_good_count" : rows[0].bulletin_good_count,
+						"bulletin_ink" : rows[0].bulletin_ink,
+						"user_id" : rows[0].user_id,
+						"bulletin_text" : rows[0].bulletin_text,
+						"topic_text" : rows[0].topic_text,
+          }
         });
         connection.release();
         callback(null, "successful rows");
