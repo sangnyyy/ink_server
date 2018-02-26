@@ -2,15 +2,12 @@ var express = require('express');
 var router = express.Router();
 var login = require('./login/index');
 var board = require('./board/index');
-<<<<<<< HEAD
 var vote = require('./vote/index');
 
-=======
 var schedule = require('node-schedule');
 const mysql = require('mysql');
 const pool = require('../config/dbpool');
 const async = require('async');
->>>>>>> 4fccb4d700fd9387f7e2f05cf5e330b691618aeb
 console.log("여기");
 router.use('/login', login);
 router.use('/board', board);
