@@ -97,16 +97,14 @@ async.waterfall(taskArray, (err, result) => {
 	if(err) console.log(err);
 	else console.log(result);
 });
-
-
-})
+});
 router.post('/aa', (req, res) => {
 	if(req.session.user_id){
 		res.json("success");
 	}else{
-		res.json("fail")
+		res.json("fail");
 	}
-})
+});
 
 
 
