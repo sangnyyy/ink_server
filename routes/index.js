@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var login = require('./login/index');
 var board = require('./board/index');
+<<<<<<< HEAD
 
 var bookmark = require('./bookmark/index');
 var topic = require('./topic/index');
@@ -17,6 +18,9 @@ router.use('/topic', topic);
 router.use('/follow', follow);
 
 var ink = require('./board/index');
+=======
+var ink = require('./ink/index');
+>>>>>>> 199cd61c4eb906a6bd934b662b9d96514e19dfa9
 var vote = require('./vote/index');
 var schedule = require('node-schedule');
 const mysql = require('mysql');

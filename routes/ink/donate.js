@@ -8,7 +8,7 @@ var session = require('express-session');
 
 
 
-router.get('/', (req, res) => {
+router.post('/', (req, res) => {
 console.log("asd");
   var object = [];
 	var taskArray = [
@@ -45,12 +45,40 @@ console.log("asd");
           });
           callback("mysql proc error ", null);
         }else{
-          console.log(rows);
-          res.json(rows);
-          callback(null, userData);
+        if(rows.changedRows==1){
+          console.log("success");
+
+            callback(null, connection);
+        }else{
+          console.log("fail");
+          connection.release();
+          res.status(501).send({
+            stat: "fail"
+          });
+          callback("mysql proc error ", null);
+        }
+        }
+      });
+    },
+    (connection, callback) => {
+      let updateink = "update users set ink = ink-? where user_id = ?;";
+      connection.query(updateink, [req.body.bulletin_ink,req.session.user_id], (err, rows) => {
+        if(err){
+          connection.release();
+          res.status(501).send({
+            stat: "fail"
+          });
+          callback("mysql proc error ", null);
+        }else{
+        if(rows.changedRows==1){
+          console.log("success");
+        }else{
+
+        }
         }
       });
     }
+
 
 	];
 	async.waterfall(taskArray, (err, result) => {
