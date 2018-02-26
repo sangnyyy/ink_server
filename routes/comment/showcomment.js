@@ -36,8 +36,8 @@ router.post('/', (req, res) => {
   		});
   	},
     (connection, callback) => {
-  		let selectBookmarkQuery = "SELECT * FROM bulletin inner join bookmark on bookmark.user_id =? and bulletin.bulletin_id = bookmark.bulletin_id;";
-  		connection.query(selectBookmarkQuery,req.session.user_id,(err, rows) => {
+  		let selectCommentQuery = "SELECT * FROM comment where bulletin_id=?;";
+  		connection.query(selectCommentQuery,req.body.bulletin_id,(err, rows) => {
         if(err){
           res.status(500).send({
   					stat: "fail",

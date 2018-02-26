@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var votecount = require('./votecount');
-var showvotecount = require('./showvotecount');
+//var showvotecount = require('./showvotecount');
 var showvoteuser = require('./showvoteuser');
 var deletevotecount = require('./deletevotecount');
 

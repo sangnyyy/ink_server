@@ -2,18 +2,16 @@ var express = require('express');
 var router = express.Router();
 var login = require('./login/index');
 var board = require('./board/index');
-<<<<<<< HEAD
 var vote = require('./vote/index');
 
-=======
 var ink = require('./ink/index');
 var vote = require('./vote/index');
->>>>>>> f24bc0749495e0af58e55fe41e4fad1c2213046c
 var schedule = require('node-schedule');
 var bookmark = require('./bookmark/index');
 var follow = require('./follow/index');
 var topic = require('./topic/index');
 var mypage = require('./mypage/index');
+var comment = require('./comment/index');
 const mysql = require('mysql');
 const pool = require('../config/dbpool');
 const async = require('async');
@@ -25,6 +23,7 @@ router.use('/vote', vote);
 router.use('/bookmark', bookmark);
 router.use('/topic', topic);
 router.use('/mypage', mypage);
+router.use('/comment', comment);
 
 
 var conStyle = '00 00 00 * * 0-7';
