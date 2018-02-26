@@ -4,20 +4,23 @@ const mysql = require('mysql');
 const pool = require('../../config/dbpool');
 const async = require('async');
 const crypto = require('crypto');
-const date = require('date-utils');
+//const date = require('date-utils');
+var moment = require('moment');
 
 router.post('/', (req,res) => {
 	let user_id = req.session.user_id;
-	let bulletin_name = req.body.bulletin_name;
   let bulletin_text = req.body.bulletin_text;
-	let dt = new Date();
-	let bulletin_date = dt.toFormat('YYYY-MM-DD HH24:MI:SS');
+  let topic_text = req.body.topic_text;
+	//let dt = new Date();
+	//let bulletin_date = now.toFormat('YYYY-MM-DD HH24:MI:SS');
+  var now = moment();
+  var bulletin_date = now.format('YYYY-MM-DD HH:mm:ss');
+  console.log(bulletin_date);
 	let query = {
-		insertQuery: 'INSERT INTO bulletin (bulletin_id, bulletin_name, comment_content, comment_written_time) VALUES (?, ?, ?, ?)',
-		selectQuery: 'SELECT comment_id, article_id, main_community_type, nickname, comment_id, comment_content, comment_written_time, users.user_id '+
-		'FROM article_comment INNER JOIN users ON article_comment.user_id=users.user_id WHERE (article_id = ? )',
-		countQuery: 'UPDATE article_list SET coco_comment_count = coco_comment_count+1 WHERE crawling_article_id=?',
-		selectIndex: 'SELECT comment_id, article_id, user_id, comment_content, comment_written_time FROM article_comment WHERE comment_id = ?'
+		insertQuery: 'INSERT INTO bulletin (bulletin_date, user_id, bulletin_text, topic_text) VALUES (?, ?, ?, ?)',
+    selectShowQuery: 'select bulletin_id, bulletin_date, bulletin_good_count, bulletin_ink, bulletin_text, topic_text, user_id FROM bulletin limit 20 ',
+		selectIndex: 'SELECT bulletin_id, bulletin_date, bulletin_good_count, bulletin_ink, user_id, bulletin_text, topic_text '+
+		'FROM bulletin WHERE (bulletin_id = ? )'
 	}
 	console.log("fjfjfj");
 	let taskArray = [
@@ -47,11 +50,7 @@ router.post('/', (req,res) => {
 	},
 	(connection, callback) => {
 		let insertQuery = query.insertQuery;
-		connection.query(insertQuery, [article_id, user_id, comment_content, comment_written_time], (err, row) => {
-			console.log(article_id);
-			console.log(user_id);
-			console.log(comment_content);
-			console.log(comment_written_time);
+		connection.query(insertQuery, [bulletin_date, user_id, bulletin_text, topic_text], (err, row) => {
 			if(err){
 				res.status(500).send({
 					stat: "fail"
@@ -65,19 +64,8 @@ router.post('/', (req,res) => {
 		});
 	},
 	(connection, row, callback) => {
-		let countQuery = query.countQuery;
-		connection.query(countQuery, article_id, (err) => {
-			if(err){
-				connection.release();
-				callback("comment count plus error", null);
-			}else{
-				callback(null, connection, row);
-			}
-		});
-	},
-	(connection, row, callback) => {
-		let selectQuery = query.selectQuery;
-		connection.query(selectQuery, article_id, (err, rows) => {
+		let selectShowQuery = query.selectShowQuery;
+		connection.query(selectShowQuery, (err, rows) => {
 			console.log("여기" + row.insertId);
 			if(err){
 				res.status(401).send({
@@ -87,7 +75,7 @@ router.post('/', (req,res) => {
 				callback("select error", null);
 			}else{
 				let selectIndex = query.selectIndex;
-				connection.query(selectIndex, row.insertId, (err, commentData) =>{
+				connection.query(selectIndex, row.insertId, (err, bulletinData) =>{
 					if(err){
 						console.log(err);
 						res.status(401).send({
@@ -100,11 +88,14 @@ router.post('/', (req,res) => {
 						res.status(201).send({
 							stat: "select success",
 							data: {
-								"comment_id" : commentData[0].comment_id,
-								"article_id" : commentData[0].article_id,
-								"user_id" : commentData[0].user_id,
-								"comment_content" : commentData[0].comment_content,
-								"comment_written_time" : commentData[0].comment_written_time
+								"bulletin_id" : bulletinData[0].bulletin_id,
+								"bulletin_name" : bulletinData[0].bulletin_name,
+								"bulletin_date" : bulletinData[0].bulletin_date,
+								"bulletin_good_count" : bulletinData[0].bulletin_good_count,
+								"bulletin_ink" : bulletinData[0].bulletin_ink,
+                "bulletin_text" : bulletinData[0].bulletin_text,
+                "user_id" : bulletinData[0].user_id,
+                "topic_text" : bulletinData[0].topic_text
 							},
 							list: rows
 
