@@ -35,7 +35,6 @@ console.log("asd");
 			}else{
 				res.status(201).send({
 				stat : "success"
-
 				});
 
 				callback( "success logout" , null);
