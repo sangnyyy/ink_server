@@ -1,10 +1,12 @@
 var express = require('express');
 var router = express.Router();
-var getBookmark = require('./getBookmark');
-var createBookmark = require('./createBookmark');
-router.use('/getBookmark', getBookmark);
-router.use('/createBookmark', createBookmark);
+var getbookmark = require('./getbookmark');
+var createbookmark = require('./createbookmark');
+var deletebookmark = require('./deletebookmark');
 
+router.use('/getbookmark', getbookmark);
+router.use('/createbookmark', createbookmark);
+router.use('/deletebookmark', deletebookmark);
 
 
 
