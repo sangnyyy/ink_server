@@ -5,7 +5,7 @@ const pool = require('../../config/dbpool');
 const async = require('async');
 const crypto = require('crypto');
 
-console.log("deletevote")
+console.log("deletevote");
 
 router.post('/', (req,res) => {
 	let bulletin_id = req.body.bulletin_id;
@@ -23,7 +23,7 @@ router.post('/', (req,res) => {
 		if(req.session.user_id){
 			callback(null);
 		}else{
-			callback("0")
+			callback("0");
 			res.status(500).send({
 				stat : 0,
 			});
