@@ -36,6 +36,23 @@ console.log("asd");
   		});
 		},
     (connection, callback) => {
+      let updateink = "select * from bulletin where bulletin_id=?";
+      connection.query(updateink, [req.body.bulletin_id], (err, rows) => {
+        if(err){
+          connection.release();
+          res.status(501).send({
+            stat: "fail"
+          });
+          callback("mysql proc error ", null);
+        }else{
+          res.status(200).send({
+              "stat":"success",
+              "data":rows
+          });
+        }
+      });
+    },
+    (connection, callback) => {
       let updateink = "update bulletin set bulletin_ink = bulletin_ink+? where bulletin_id = ?;";
       connection.query(updateink, [req.body.bulletin_ink,req.body.bulletin_id], (err, rows) => {
         if(err){
@@ -71,10 +88,27 @@ console.log("asd");
           callback("mysql proc error ", null);
         }else{
         if(rows.changedRows==1){
-          console.log("success");
+          callback(null, connection);
         }else{
-
+          callback("fail");
         }
+        }
+      });
+    },
+    (connection, callback) => {
+      let updateink = "select * from bulletin where bulletin_id=?";
+      connection.query(updateink, [req.body.bulletin_id], (err, rows) => {
+        if(err){
+          connection.release();
+          res.status(501).send({
+            stat: "fail"
+          });
+          callback("mysql proc error ", null);
+        }else{
+          res.status(200).send({
+              "stat":"success",
+              "data":rows
+          });
         }
       });
     }
