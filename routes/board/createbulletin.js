@@ -98,6 +98,7 @@ router.post('/', (req,res) => {
 				connection.release();
 				callback("insert error");
 			}else{
+				console.log(row);
 				callback(null, connection, row);
 			}
 		});
