@@ -1,13 +1,16 @@
 var express = require('express');
 var router = express.Router();
-var showfollow = require('./showfollow');
-var createfollow = require('./createfollow');
-var deletefollow = require('./deletefollow');
+var showfollowing = require('./showfollowing');
+var createfollowing = require('./createfollowing');
+var deletefollowing = require('./deletefollowing');
+var showfollower = require('./showfollower');
 
-router.use('/showfollow', showfollow);
-router.use('/createfollow', createfollow);
-router.use('/deletefollow', deletefollow);
+console.log("follow");
 
+router.use('/showfollowing', showfollowing);
+router.use('/createfollowing', createfollowing);
+router.use('/deletefollowing', deletefollowing);
+router.use('/showfollower', showfollower);
 
 
 module.exports = router;

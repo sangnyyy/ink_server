@@ -16,7 +16,7 @@ router.post('/', (req, res) => {
       } else {
         callback("0");
         res.status(500).send({
-          stat: 0
+          stat: 0,
         });
       }
     },
@@ -35,41 +35,42 @@ router.post('/', (req, res) => {
       });
     },
     (connection, callback) => {
-      let countCommentQuery = "SELECT count(*) as count FROM comment where user_id = ? and comment_id = ?;";
-      let deleteCommentQuery = "DELETE FROM comment where user_id = ? and comment_id = ?";
-      connection.query(countCommentQuery, [req.session.user_id, req.body.comment_id], (err, rows) => {
+      let countBookmarkQuery = "SELECT count(*) as count FROM follower where user_id=? and follower_user_id = ?";
+      let deleteBookmarkQuery = "DELETE FROM follower where user_id=? and follower_user_id = ?";
+
+      connection.query(countBookmarkQuery, [req.session.user_id, req.body.follower_user_id], (err, rows) => {
         if (err) {
           res.status(500).send({
             stat: "fail",
-            masg: "delete comment error"
+            masg: "delete following error"
           });
           connection.release();
-          callback('delete comment error' + err);
+          callback('delete following error' + err);
         } else {
           if (rows[0].count > 0) {
-            connection.query(deleteCommentQuery, [req.session.user_id, req.body.comment_id], (err, rows) => {
+            connection.query(deleteBookmarkQuery, [req.session.user_id, req.body.follower_user_id], (err, rows) => {
               if (err) {
                 res.status(500).send({
                   stat: "fail",
-                  masg: "delete comment error"
+                  masg: "delete following error"
                 });
                 connection.release();
-                callback('delete comment error' + err);
+                callback('delete following error' + err);
               } else {
                 res.status(201).send({
-                  stat: "delete comment success",
+                  stat: "delete following success",
                 });
                 connection.release();
-                callback("delete success", null);
+                callback("delete following success", null);
               }
             });
           } else {
             res.status(500).send({
               stat: "fail",
-              masg: "delete comment error"
+              masg: "delete following error"
             });
             connection.release();
-            callback('delete comment error' + err);
+            callback('delete following error' + err);
 
           }
         }

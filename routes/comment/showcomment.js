@@ -36,16 +36,27 @@ router.post('/', (req, res) => {
   		});
   	},
     (connection, callback) => {
+      //let countCommentQuery = "SELECT count(*) as count FROM comment where bulletin_id=?"
   		let selectCommentQuery = "SELECT * FROM comment where bulletin_id=?;";
   		connection.query(selectCommentQuery,req.body.bulletin_id,(err, rows) => {
         if(err){
           res.status(500).send({
   					stat: "fail",
-  					masg: "select bookmark error"
+  					masg: "select comment error"
   				});
           connection.release();
-  				callback('select bookmark error' + err);
-  			}else{
+  				callback('select comment error' + err);
+  			}
+        else if(!rows[0]){
+          res.status(500).send({
+  					stat: "fail",
+  					masg: "select comment error"
+  				});
+          connection.release();
+  				callback('select comment error' + err);
+
+        }
+        else{
           res.status(201).send({
             stat:"success",
             data: rows
