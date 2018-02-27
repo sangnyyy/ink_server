@@ -51,7 +51,7 @@ router.post('/', (req,res) => {
 				callback(null, connection);
 			}else{
 				res.status(401).send({
-					msg: "email duplicate"
+					stat: "email duplicate"
 				});
 				connection.release();
 				callback("email duplicate", null);
@@ -94,7 +94,7 @@ router.post('/', (req,res) => {
 							stat: "success",
 							data: {
 								"email":userData[0].email,
-								"ink":userData[0].ink		
+								"ink":userData[0].ink
 							}
 						});
 						req.session.user_id = userData[0].user_id;

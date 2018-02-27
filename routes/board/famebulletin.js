@@ -14,7 +14,7 @@ router.get('/', (req, res) => {
 			if(req.session.user_id){
 				callback(null);
 			}else{
-				callback("0")
+				callback("0");
 				res.status(500).send({
 					stat : 0,
 				});
@@ -30,24 +30,9 @@ router.get('/', (req, res) => {
 				} else callback(null,connection);
 			});
 		},
-		(connection, callback) =>{
-      var flagQuery = 'UPDATE bulletin SET flag = CASE WHEN (bulletin_good_count >= 100) THEN 1 WHEN (bulletin_good_count < 100) THEN 0 END';
-      connection.query(flagQuery, (err,data) => {
-        if(err){
-          console.log(err);
-  				res.status(500).send({
-            stat:"fail"
-          });
-          connection.relaease();
-  			}else{
-  				callback(null, connection);
-  			}
-      });
-		},
     (connection, callback) => {
-			var selectQuery = 'SELECT if((SELECT COUNT(*) FROM vote WHERE vote.user_id = ? AND vote.bulletin_id = bulletin.bulletin_id)=1, 1, 0) AS is_liked, ' +
-												'bulletin.bulletin_id, bulletin.bulletin_date, bulletin.bulletin_good_count, bulletin.bulletin_ink, bulletin.bulletin_text, bulletin.topic_text, bulletin.user_id, bulletin.flag, ' +
-												'users.email FROM bulletin INNER JOIN users ON users.user_id = bulletin.user_id WHERE bulletin.flag = 0 ORDER BY bulletin.bulletin_date DESC';
+			var selectQuery = 'SELECT bulletin.bulletin_id, bulletin.bulletin_date, bulletin.bulletin_text, bulletin.topic_text, bulletin.user_id, bulletin.flag, ' +
+												'users.email FROM bulletin INNER JOIN users ON users.user_id = bulletin.user_id WHERE bulletin.flag = 1';
 			connection.query(selectQuery, user_id, (err, rows) => {
 				if(err){
 					res.status(500).send({

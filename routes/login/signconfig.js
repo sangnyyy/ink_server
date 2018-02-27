@@ -42,7 +42,7 @@ router.post('/', (req, res) => {
 		if(userData.length === 0){
 			res.status(201).send({
 				stat: "success",
-				data: {"user_id":req.body.email}
+				data: {"email":req.body.email}
 			});
 			callback("success", null);
 		}else{
