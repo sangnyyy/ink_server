@@ -12,7 +12,12 @@ router.post('/', (req,res) => {
 	let bulletin_id = req.body.bulletin_id;
 	let query = {
 		insertQuery: 'INSERT INTO vote (user_id, type, bulletin_id) VALUES (?, 1, ?)',
-		countQuery: 'UPDATE bulletin SET bulletin_good_count = bulletin_good_count+1 WHERE bulletin_id=?',
+		countQuery: 'UPDATE bulletin SET bulletin_good_count = bulletin_good_count+1 WHERE bulletin_id=? ',
+		historyQuery: 'INSERT INTO bulletin_history (bulletin_history.bulletin_id, ink_change_history) ' +
+									'VALUES(?, (SELECT bulletin.bulletin_good_count FROM bulletin WHERE bulletin.bulletin_id = ?) DIV 10) ' +
+									'ON DUPLICATE KEY UPDATE ink_change_history = IF(ink_change_history < (SELECT bulletin.bulletin_good_count FROM bulletin WHERE bulletin.bulletin_id = ?) DIV 10, ' +
+									'VALUES(bulletin_history.ink_change_history), ink_change_history)',
+		//inkQuery: '',
     selectQuery: 'SELECT bulletin_id, bulletin_date, bulletin_good_count, bulletin_ink, bulletin_text, topic_text, user_id FROM bulletin WHERE bulletin_id = ?'
 	};
 	console.log("fjfjfj");
@@ -73,6 +78,24 @@ router.post('/', (req,res) => {
 				}
 			});
 	},
+	(connection, callback) => {
+		let historyQuery = query.historyQuery;
+		connection.query(historyQuery, [bulletin_id, bulletin_id, bulletin_id], (err, history) => {
+			if(err){
+				console.log(err);
+				res.status(501).send({
+					stat: "history change error"
+				});
+				connection.release();
+				callback("history change error", null);
+			}else if(!history){
+				callback(null, connection);
+			}
+			else{
+				callback(null, connection);
+			}
+		});
+},
 	(connection, callback) => {
 		console.log('asdadasdsagsdgdgdgdg');
 		var selectQuery = query.selectQuery;
