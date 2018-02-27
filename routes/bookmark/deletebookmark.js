@@ -35,22 +35,48 @@ router.post('/', (req, res) => {
       });
     },
     (connection, callback) => {
-      let deleteBookmarkQuery = "DELETE FROM bookmark where bulletin_id = ?";
-      connection.query(deleteBookmarkQuery, req.body.bulletin_id, (err, data) => {
+      let countQuery = "SELECT count(*) as count FROM bookmark where user_id = ? and bulletin_id = ?;";
+      let deleteQuery = "DELETE FROM bookmark where user_id = ? and bulletin_id = ?;";
+
+      connection.query(countQuery, [req.session.user_id, req.body.bulletin_id], (err, rows) => {
         if (err) {
           res.status(500).send({
-  					stat: "fail",
-  					masg: "delete bookmark error"
-  				});
-          connection.release();
-  				callback('delete bookmark error' + err);
-        } else {
-          res.status(201).send({
-            stat:"delete bookmark success",
+            stat: "fail",
+            masg: "count bookmark error"
           });
           connection.release();
+          callback('count bookmark error' + err);
+        } else {
+          if (rows[0].count > 0) {
+            connection.query(deleteQuery, [req.session.user_id, req.body.bulletin_id], (err, rows) => {
+              if (err) {
+                res.status(500).send({
+                  stat: "fail",
+                  masg: "delete bookmark error"
+                });
+                connection.release();
+                callback('delete bookmark error' + err);
+              } else {
+                res.status(201).send({
+                  stat: "delete bookmark success",
+                });
+                connection.release();
+                callback("delete success", null);
+              }
+            });
+          } else {
+            res.status(500).send({
+              stat: "fail",
+              masg: "delete bookmark error"
+            });
+            connection.release();
+            callback('delete bookmark error' + err);
+
+          }
         }
       });
+
+
     }
 
   ];

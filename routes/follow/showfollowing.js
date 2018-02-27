@@ -36,8 +36,8 @@ router.post('/', (req, res) => {
   		});
   	},
     (connection, callback) => {
-  		let selectFollowerQuery = "SELECT email FROM users inner join follower on follower.user_id =? and users.user_id = follower.follower_user_id;";
-  		connection.query(selectFollowerQuery,req.session.user_id,(err, rows) => {
+  		let selectFollowingQuery = "SELECT email FROM users inner join follower on follower.user_id =? and users.user_id = follower.follower_user_id;";
+  		connection.query(selectFollowingQuery,req.session.user_id,(err, rows) => {
   			if(err){
           res.status(500).send({
   					stat: "fail",

@@ -36,31 +36,46 @@ router.post('/', (req, res) => {
   		});
   	},
     (connection, callback) => {
+      let countMyWriteQuery = "SELECT count(*) as count FROM bulletin where user_id=? and bulletin_id=?";
   		let deleteMyWriteQuery = "DELETE FROM bulletin where user_id=? and bulletin_id=?";
-  		connection.query(deleteMyWriteQuery,[req.session.user_id,req.body.bulletin_id],(err, rows) => {
-        if(!rows){
+      connection.query(countMyWriteQuery, [req.session.user_id, req.body.bulletin_id], (err, rows) => {
+        if (err) {
           res.status(500).send({
-  					stat: "fail",
-  					masg: "no such rows exist"
-  				});
-          connection.release();
-  				callback('no such rows exist' + err);
-  			}
-
-  			if(err){
-          res.status(500).send({
-  					stat: "fail",
-  					masg: "delete mywrite error"
-  				});
-          connection.release();
-  				callback('delete mywrite error' + err);
-  			}else{
-          res.status(201).send({
-            stat:"delete mywrite success",
+            stat: "fail",
+            masg: "delete mywrite error"
           });
           connection.release();
+          callback('delete mywrite error' + err);
+        } else {
+          console.log(rows[0].count);
+          if (rows[0].count > 0) {
+            connection.query(deleteMyWriteQuery, [req.session.user_id, req.body.bulletin_id], (err, rows) => {
+              if (err) {
+                res.status(500).send({
+                  stat: "fail",
+                  masg: "delete mywrite error"
+                });
+                connection.release();
+                callback('delete mywrite error' + err);
+              } else {
+                res.status(201).send({
+                  stat: "delete mywrite success",
+                });
+                connection.release();
+                callback("delete mywrite success", null);
+              }
+            });
+          } else {
+            res.status(500).send({
+              stat: "fail",
+              masg: "delete mywrite error"
+            });
+            connection.release();
+            callback('delete mywrite error' + err);
+
+          }
         }
-  		});
+      });
   	}
   ];
 

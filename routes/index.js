@@ -29,7 +29,7 @@ router.use('/bookmark', bookmark);
 router.use('/topic', topic);
 router.use('/mypage', mypage);
 router.use('/search',search);
-
+router.use('/follow', follow);
 router.use('/comment', comment);
 
 
