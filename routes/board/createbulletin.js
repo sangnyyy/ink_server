@@ -21,7 +21,7 @@ router.post('/', (req,res) => {
     selectShowQuery: 'select bulletin_id, bulletin_date, bulletin_good_count, bulletin_ink, bulletin_text, topic_text, user_id FROM bulletin limit 20 ',
 		selectIndex: 'SELECT bulletin_id, bulletin_date, bulletin_good_count, bulletin_ink, user_id, bulletin_text, topic_text '+
 		'FROM bulletin WHERE (bulletin_id = ? )'
-	}
+	};
 	console.log("fjfjfj");
 	let taskArray = [
 	(callback) =>{
@@ -29,7 +29,7 @@ router.post('/', (req,res) => {
 		if(req.session.user_id){
 			callback(null);
 		}else{
-			callback("0")
+			callback("0");
 			res.status(500).send({
 				stat : 0,
 			});
