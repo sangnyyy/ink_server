@@ -36,31 +36,20 @@ router.post('/', (req, res) => {
   		});
   	},
     (connection, callback) => {
-      let selectMyWriteQuery = "SELECT * FROM bulletin where user_id=?";
-  		connection.query(selectMyWriteQuery,req.session.user_id,(err, rows) => {
+  		let selectFollowerQuery ="SELECT email FROM users inner join follower on follower.follower_user_id =? and users.user_id = follower.user_id;";
+  		connection.query(selectFollowerQuery,req.session.user_id,(err, rows) => {
   			if(err){
           res.status(500).send({
   					stat: "fail",
-  					masg: "select mywrite error"
+  					masg: "select follow error"
   				});
           connection.release();
-  				callback('select mywrite error' + err);
-  			}
-        else if(!rows[0]){
-          res.status(201).send({
-  					stat: "success",
-  					masg: "null data",
-            data:rows
-  				});
-          connection.release();
-  				callback("null data");
-        }
-        else{
+  				callback('select follow error' + err);
+  			}else{
           res.status(201).send({
             stat:"success",
             data: rows
           });
-          callback("null data");
           connection.release();
         }
   		});

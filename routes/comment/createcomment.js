@@ -51,7 +51,8 @@ router.post('/', (req, res) => {
             stat:"success",
             data:{
               user_id : req.session.user_id,
-              bulletin_id : req.body.bulletin_id
+              bulletin_id : req.body.bulletin_id,
+              comment_text : req.body.comment_text
             }
           });
           connection.release();
