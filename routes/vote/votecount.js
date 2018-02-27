@@ -10,6 +10,8 @@ console.log("votecount");
 router.post('/', (req,res) => {
 	let user_id = req.session.user_id;
 	let bulletin_id = req.body.bulletin_id;
+	let please = mysql.queryFormat;
+	console.log("되나?" + please);
 	let query = {
 		insertQuery: 'INSERT INTO vote (user_id, type, bulletin_id) VALUES (?, 1, ?)',
 		countQuery: 'UPDATE bulletin SET bulletin_good_count = bulletin_good_count+1 WHERE bulletin_id=? ',
@@ -17,7 +19,7 @@ router.post('/', (req,res) => {
 									'VALUES(?, (SELECT bulletin.bulletin_good_count FROM bulletin WHERE bulletin.bulletin_id = ?) DIV 10) ' +
 									'ON DUPLICATE KEY UPDATE ink_change_history = IF(ink_change_history < (SELECT bulletin.bulletin_good_count FROM bulletin WHERE bulletin.bulletin_id = ?) DIV 10, ' +
 									'VALUES(bulletin_history.ink_change_history), ink_change_history)',
-		//inkQuery: '',
+		inkQuery: 'UPDATE users INNER JOIN bulletin_history SET users.ink = CASE WHEN bulletin_history.ink_change_history*10 >= 10 THEN users.ink +10 ELSE users.ink + 0 END WHERE bulletin_history.bulletin_id = ? AND users.user_id = (SELECT user_id FROM bulletin WHERE bulletin_id = ?)',
     selectQuery: 'SELECT bulletin_id, bulletin_date, bulletin_good_count, bulletin_ink, bulletin_text, topic_text, user_id FROM bulletin WHERE bulletin_id = ?'
 	};
 	console.log("fjfjfj");
@@ -81,6 +83,9 @@ router.post('/', (req,res) => {
 	(connection, callback) => {
 		let historyQuery = query.historyQuery;
 		connection.query(historyQuery, [bulletin_id, bulletin_id, bulletin_id], (err, history) => {
+			console.log(history);
+			console.log("[history_id]" + history.insertId);
+			console.log("[history]" + history);
 			if(err){
 				console.log(err);
 				res.status(501).send({
@@ -88,11 +93,23 @@ router.post('/', (req,res) => {
 				});
 				connection.release();
 				callback("history change error", null);
-			}else if(!history){
+			}else if(history.insertId == 0){
 				callback(null, connection);
 			}
 			else{
-				callback(null, connection);
+				let inkQuery = query.inkQuery;
+				connection.query(inkQuery, [bulletin_id, bulletin_id], (err) => {
+					if(err){
+						console.log(err);
+						res.status(501).send({
+							stat: "ink update error"
+						});
+						connection.release();
+						callback("ink change error", null);
+					}else{
+						callback(null, connection);
+					}
+				});
 			}
 		});
 },
