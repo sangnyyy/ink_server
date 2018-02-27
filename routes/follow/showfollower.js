@@ -36,7 +36,7 @@ router.post('/', (req, res) => {
   		});
   	},
     (connection, callback) => {
-  		let selectFollowerQuery ="SELECT email FROM users inner join follower on follower.follower_user_id =? and users.user_id = follower.user_id;";
+  		let selectFollowerQuery ="SELECT email, users.user_id FROM users inner join follower on follower.follower_user_id =? and users.user_id = follower.user_id;";
   		connection.query(selectFollowerQuery,req.session.user_id,(err, rows) => {
   			if(err){
           res.status(500).send({

@@ -35,18 +35,8 @@ router.post('/', (req, res) => {
       });
     },
     (connection, callback) => {
-      let countCommentQuery = "SELECT count(*) as count FROM comment where user_id = ? and comment_id = ?;";
       let deleteCommentQuery = "DELETE FROM comment where user_id = ? and comment_id = ?";
-      connection.query(countCommentQuery, [req.session.user_id, req.body.comment_id], (err, rows) => {
-        if (err) {
-          res.status(500).send({
-            stat: "fail",
-            masg: "delete comment error"
-          });
-          connection.release();
-          callback('delete comment error' + err);
-        } else {
-          if (rows[0].count > 0) {
+
             connection.query(deleteCommentQuery, [req.session.user_id, req.body.comment_id], (err, rows) => {
               if (err) {
                 res.status(500).send({
@@ -63,17 +53,7 @@ router.post('/', (req, res) => {
                 callback("delete success", null);
               }
             });
-          } else {
-            res.status(500).send({
-              stat: "fail",
-              masg: "delete comment error"
-            });
-            connection.release();
-            callback('delete comment error' + err);
 
-          }
-        }
-      });
     }
 
   ];
