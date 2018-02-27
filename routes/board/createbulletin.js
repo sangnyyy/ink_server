@@ -11,17 +11,18 @@ router.post('/', (req,res) => {
 	let user_id = req.session.user_id;
   let bulletin_text = req.body.bulletin_text;
   let topic_text = req.body.topic_text;
+	let bulletin_ink=req.body.bulletin_ink;
 	//let dt = new Date();
 	//let bulletin_date = now.toFormat('YYYY-MM-DD HH24:MI:SS');
   var now = moment();
   var bulletin_date = now.format('YYYY-MM-DD HH:mm:ss');
   console.log(bulletin_date);
 	let query = {
-		insertQuery: 'INSERT INTO bulletin (bulletin_date, user_id, bulletin_text, topic_text) VALUES (?, ?, ?, ?)',
+		insertQuery: 'INSERT INTO bulletin (bulletin_date, bulletin_ink,user_id, bulletin_text, topic_text) VALUES (?,?, ?, ?, ?)',
     selectShowQuery: 'select bulletin_id, bulletin_date, bulletin_good_count, bulletin_ink, bulletin_text, topic_text, user_id FROM bulletin limit 20 ',
 		selectIndex: 'SELECT bulletin_id, bulletin_date, bulletin_good_count, bulletin_ink, user_id, bulletin_text, topic_text '+
 		'FROM bulletin WHERE (bulletin_id = ? )'
-	}
+	};
 	console.log("fjfjfj");
 	let taskArray = [
 	(callback) =>{
@@ -29,7 +30,7 @@ router.post('/', (req,res) => {
 		if(req.session.user_id){
 			callback(null);
 		}else{
-			callback("0")
+			callback("0");
 			res.status(500).send({
 				stat : 0,
 			});
@@ -49,8 +50,46 @@ router.post('/', (req,res) => {
 		});
 	},
 	(connection, callback) => {
+		let updateink = "select * from users where user_id=?";
+		connection.query(updateink, [req.session.user_id], (err, rows) => {
+			if(err){
+				connection.release();
+				res.status(501).send({
+					stat: "101"
+				});
+				callback("101", null);
+			}else{
+				if(rows[0].ink-req.body.bulletin_ink<0){
+					res.status(501).send({
+						stat:101
+					});
+					callback("101", null);
+
+				}else{
+					callback(null,connection);
+				}
+			}
+		});
+	},
+	(connection, callback) => {
+		let updateink = "update users set ink =ink-? where user_id=?;";
+		connection.query(updateink, [req.body.bulletin_ink,req.session.user_id], (err, rows) => {
+			if(err){
+				connection.release();
+				res.status(501).send({
+					stat: "102"
+				});
+				callback("102", null);
+			}else{
+				console.log(rows);
+					callback(null, connection);
+
+			}
+		});
+	},
+	(connection, callback) => {
 		let insertQuery = query.insertQuery;
-		connection.query(insertQuery, [bulletin_date, user_id, bulletin_text, topic_text], (err, row) => {
+		connection.query(insertQuery, [bulletin_date, bulletin_ink,user_id, bulletin_text, topic_text], (err, row) => {
 			if(err){
 				res.status(500).send({
 					stat: "fail"
