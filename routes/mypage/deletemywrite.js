@@ -36,19 +36,7 @@ router.post('/', (req, res) => {
   		});
   	},
     (connection, callback) => {
-      let countMyWriteQuery = "SELECT count(*) as count FROM bulletin where user_id=? and bulletin_id=?";
-  		let deleteMyWriteQuery = "DELETE FROM bulletin where user_id=? and bulletin_id=?";
-      connection.query(countMyWriteQuery, [req.session.user_id, req.body.bulletin_id], (err, rows) => {
-        if (err) {
-          res.status(500).send({
-            stat: "fail",
-            masg: "delete mywrite error"
-          });
-          connection.release();
-          callback('delete mywrite error' + err);
-        } else {
-          console.log(rows[0].count);
-          if (rows[0].count > 0) {
+      let deleteMyWriteQuery = "DELETE FROM bulletin where user_id=? and bulletin_id=?";
             connection.query(deleteMyWriteQuery, [req.session.user_id, req.body.bulletin_id], (err, rows) => {
               if (err) {
                 res.status(500).send({
@@ -65,18 +53,7 @@ router.post('/', (req, res) => {
                 callback("delete mywrite success", null);
               }
             });
-          } else {
-            res.status(500).send({
-              stat: "fail",
-              masg: "delete mywrite error"
-            });
-            connection.release();
-            callback('delete mywrite error' + err);
-
-          }
-        }
-      });
-  	}
+    }
   ];
 
   async.waterfall(taskArray, (err, result)=>{
