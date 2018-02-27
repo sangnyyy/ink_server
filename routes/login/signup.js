@@ -93,6 +93,7 @@ router.post('/', (req,res) => {
 						res.status(201).send({
 							stat: "success",
 							data: {
+								"user_id":userData[0].user_id,
 								"email":userData[0].email,
 								"ink":userData[0].ink
 							}
